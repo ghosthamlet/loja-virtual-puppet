@@ -1,15 +1,19 @@
 # encoding: utf-8
+require 'puppet-lint/tasks/puppet-lint'
+
+PuppetLint.configuration.ignore_paths = ["librarian/**/*.pp"]
+
 namespace :librarian do
   desc "Instala os módulos usando o Librarian Puppet"
   task :install do
-    Dir.chdir(’librarian’) do
+    Dir.chdir('librarian') do
       sh "librarian-puppet install"
     end
   end
 end
 
 desc "Cria o pacote puppet.tgz"
-task :package do
+task :package => ['librarian:install', :lint] do
   sh "tar czvf puppet.tgz manifests modules librarian/modules"
 end
 
